@@ -21,14 +21,24 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-# Create Database
-# ------------------------------------------------------------
+-- 
+-- ===============================================================================
+-- ==                                                                           ==
+-- ==                     Generated from 'scripts/sql/src/'                     ==
+-- == by running 'mvn compile -pl apollo-build-sql-converter -Psql-converter'.  ==
+-- ==                              DO NOT EDIT !!!                              ==
+-- ==                                                                           ==
+-- ===============================================================================
+-- 
+-- 
+-- Create Database
+-- ------------------------------------------------------------
 CREATE DATABASE IF NOT EXISTS ApolloConfigDB DEFAULT CHARACTER SET = utf8mb4;
 
 Use ApolloConfigDB;
 
-# Dump of table app
-# ------------------------------------------------------------
+-- Dump of table app
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `App`;
 
@@ -54,8 +64,8 @@ CREATE TABLE `App` (
 
 
 
-# Dump of table appnamespace
-# ------------------------------------------------------------
+-- Dump of table appnamespace
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `AppNamespace`;
 
@@ -80,8 +90,8 @@ CREATE TABLE `AppNamespace` (
 
 
 
-# Dump of table audit
-# ------------------------------------------------------------
+-- Dump of table audit
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Audit`;
 
@@ -103,8 +113,8 @@ CREATE TABLE `Audit` (
 
 
 
-# Dump of table cluster
-# ------------------------------------------------------------
+-- Dump of table cluster
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Cluster`;
 
@@ -128,8 +138,8 @@ CREATE TABLE `Cluster` (
 
 
 
-# Dump of table commit
-# ------------------------------------------------------------
+-- Dump of table commit
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Commit`;
 
@@ -153,8 +163,8 @@ CREATE TABLE `Commit` (
   KEY `NamespaceName` (`NamespaceName`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='commit 历史表';
 
-# Dump of table grayreleaserule
-# ------------------------------------------------------------
+-- Dump of table grayreleaserule
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `GrayReleaseRule`;
 
@@ -179,8 +189,8 @@ CREATE TABLE `GrayReleaseRule` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='灰度规则表';
 
 
-# Dump of table instance
-# ------------------------------------------------------------
+-- Dump of table instance
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Instance`;
 
@@ -200,8 +210,8 @@ CREATE TABLE `Instance` (
 
 
 
-# Dump of table instanceconfig
-# ------------------------------------------------------------
+-- Dump of table instanceconfig
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `InstanceConfig`;
 
@@ -224,8 +234,8 @@ CREATE TABLE `InstanceConfig` (
 
 
 
-# Dump of table item
-# ------------------------------------------------------------
+-- Dump of table item
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Item`;
 
@@ -250,8 +260,8 @@ CREATE TABLE `Item` (
 
 
 
-# Dump of table namespace
-# ------------------------------------------------------------
+-- Dump of table namespace
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Namespace`;
 
@@ -274,8 +284,8 @@ CREATE TABLE `Namespace` (
 
 
 
-# Dump of table namespacelock
-# ------------------------------------------------------------
+-- Dump of table namespacelock
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `NamespaceLock`;
 
@@ -295,8 +305,8 @@ CREATE TABLE `NamespaceLock` (
 
 
 
-# Dump of table release
-# ------------------------------------------------------------
+-- Dump of table release
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Release`;
 
@@ -323,8 +333,8 @@ CREATE TABLE `Release` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='发布';
 
 
-# Dump of table releasehistory
-# ------------------------------------------------------------
+-- Dump of table releasehistory
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `ReleaseHistory`;
 
@@ -352,8 +362,8 @@ CREATE TABLE `ReleaseHistory` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='发布历史';
 
 
-# Dump of table releasemessage
-# ------------------------------------------------------------
+-- Dump of table releasemessage
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `ReleaseMessage`;
 
@@ -368,8 +378,8 @@ CREATE TABLE `ReleaseMessage` (
 
 
 
-# Dump of table serverconfig
-# ------------------------------------------------------------
+-- Dump of table serverconfig
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `ServerConfig`;
 
@@ -390,8 +400,8 @@ CREATE TABLE `ServerConfig` (
   KEY `DataChange_LastTime` (`DataChange_LastTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='配置服务自身配置';
 
-# Dump of table accesskey
-# ------------------------------------------------------------
+-- Dump of table accesskey
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `AccessKey`;
 
@@ -412,8 +422,8 @@ CREATE TABLE `AccessKey` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='访问密钥';
 
 
-# Dump of table serviceregistry
-# ------------------------------------------------------------
+-- Dump of table serviceregistry
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `ServiceRegistry`;
 
@@ -430,8 +440,8 @@ CREATE TABLE `ServiceRegistry` (
   INDEX `IX_DataChange_LastTime` (`DataChange_LastTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='注册中心';
 
-# Dump of table AuditLog
-# ------------------------------------------------------------
+-- Dump of table AuditLog
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `AuditLog`;
 
@@ -458,8 +468,8 @@ CREATE TABLE `AuditLog` (
   KEY `IX_Operator` (`Operator`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审计日志表';
 
-# Dump of table AuditLogDataInfluence
-# ------------------------------------------------------------
+-- Dump of table AuditLogDataInfluence
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `AuditLogDataInfluence`;
 
@@ -483,8 +493,8 @@ CREATE TABLE `AuditLogDataInfluence` (
   KEY `IX_EntityId` (`InfluenceEntityId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审计日志数据变动表';
 
-# Config
-# ------------------------------------------------------------
+-- Config
+-- ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Cluster`, `Value`, `Comment`)
 VALUES
     ('eureka.service.url', 'default', 'http://localhost:8080/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
@@ -492,6 +502,15 @@ VALUES
     ('item.key.length.limit', 'default', '128', 'item key 最大长度限制'),
     ('item.value.length.limit', 'default', '20000', 'item value最大长度限制'),
     ('config-service.cache.enabled', 'default', 'false', 'ConfigService是否开启缓存，开启后能提高性能，但是会增大内存消耗！');
+
+-- 
+-- ===============================================================================
+-- ==                                                                           ==
+-- ==                     Generated from 'scripts/sql/src/'                     ==
+-- == by running 'mvn compile -pl apollo-build-sql-converter -Psql-converter'.  ==
+-- ==                              DO NOT EDIT !!!                              ==
+-- ==                                                                           ==
+-- ===============================================================================
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

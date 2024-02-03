@@ -21,14 +21,24 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-# Create Database
-# ------------------------------------------------------------
+-- 
+-- ===============================================================================
+-- ==                                                                           ==
+-- ==                     Generated from 'scripts/sql/src/'                     ==
+-- == by running 'mvn compile -pl apollo-build-sql-converter -Psql-converter'.  ==
+-- ==                              DO NOT EDIT !!!                              ==
+-- ==                                                                           ==
+-- ===============================================================================
+-- 
+-- 
+-- Create Database
+-- ------------------------------------------------------------
 CREATE DATABASE IF NOT EXISTS ApolloPortalDB DEFAULT CHARACTER SET = utf8mb4;
 
 Use ApolloPortalDB;
 
-# Dump of table app
-# ------------------------------------------------------------
+-- Dump of table app
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `App`;
 
@@ -54,8 +64,8 @@ CREATE TABLE `App` (
 
 
 
-# Dump of table appnamespace
-# ------------------------------------------------------------
+-- Dump of table appnamespace
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `AppNamespace`;
 
@@ -80,8 +90,8 @@ CREATE TABLE `AppNamespace` (
 
 
 
-# Dump of table consumer
-# ------------------------------------------------------------
+-- Dump of table consumer
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Consumer`;
 
@@ -106,8 +116,8 @@ CREATE TABLE `Consumer` (
 
 
 
-# Dump of table consumeraudit
-# ------------------------------------------------------------
+-- Dump of table consumeraudit
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `ConsumerAudit`;
 
@@ -125,8 +135,8 @@ CREATE TABLE `ConsumerAudit` (
 
 
 
-# Dump of table consumerrole
-# ------------------------------------------------------------
+-- Dump of table consumerrole
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `ConsumerRole`;
 
@@ -148,8 +158,8 @@ CREATE TABLE `ConsumerRole` (
 
 
 
-# Dump of table consumertoken
-# ------------------------------------------------------------
+-- Dump of table consumertoken
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `ConsumerToken`;
 
@@ -169,8 +179,8 @@ CREATE TABLE `ConsumerToken` (
   KEY `DataChange_LastTime` (`DataChange_LastTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='consumer token表';
 
-# Dump of table favorite
-# ------------------------------------------------------------
+-- Dump of table favorite
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Favorite`;
 
@@ -191,8 +201,8 @@ CREATE TABLE `Favorite` (
   KEY `DataChange_LastTime` (`DataChange_LastTime`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COMMENT='应用收藏表';
 
-# Dump of table permission
-# ------------------------------------------------------------
+-- Dump of table permission
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Permission`;
 
@@ -213,8 +223,8 @@ CREATE TABLE `Permission` (
 
 
 
-# Dump of table role
-# ------------------------------------------------------------
+-- Dump of table role
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Role`;
 
@@ -234,8 +244,8 @@ CREATE TABLE `Role` (
 
 
 
-# Dump of table rolepermission
-# ------------------------------------------------------------
+-- Dump of table rolepermission
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `RolePermission`;
 
@@ -257,8 +267,8 @@ CREATE TABLE `RolePermission` (
 
 
 
-# Dump of table serverconfig
-# ------------------------------------------------------------
+-- Dump of table serverconfig
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `ServerConfig`;
 
@@ -280,8 +290,8 @@ CREATE TABLE `ServerConfig` (
 
 
 
-# Dump of table userrole
-# ------------------------------------------------------------
+-- Dump of table userrole
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `UserRole`;
 
@@ -301,8 +311,8 @@ CREATE TABLE `UserRole` (
   KEY `IX_RoleId` (`RoleId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户和role的绑定表';
 
-# Dump of table Users
-# ------------------------------------------------------------
+-- Dump of table Users
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Users`;
 
@@ -318,8 +328,8 @@ CREATE TABLE `Users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 
-# Dump of table Authorities
-# ------------------------------------------------------------
+-- Dump of table Authorities
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `Authorities`;
 
@@ -331,8 +341,8 @@ CREATE TABLE `Authorities` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- spring session (https://github.com/spring-projects/spring-session/blob/faee8f1bdb8822a5653a81eba838dddf224d92d6/spring-session-jdbc/src/main/resources/org/springframework/session/jdbc/schema-mysql.sql)
-# Dump of table SPRING_SESSION
-# ------------------------------------------------------------
+-- Dump of table SPRING_SESSION
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `SPRING_SESSION`;
 
@@ -350,8 +360,8 @@ CREATE TABLE `SPRING_SESSION` (
   KEY `SPRING_SESSION_IX3` (`PRINCIPAL_NAME`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-# Dump of table SPRING_SESSION_ATTRIBUTES
-# ------------------------------------------------------------
+-- Dump of table SPRING_SESSION_ATTRIBUTES
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `SPRING_SESSION_ATTRIBUTES`;
 
@@ -363,8 +373,8 @@ CREATE TABLE `SPRING_SESSION_ATTRIBUTES` (
   CONSTRAINT `SPRING_SESSION_ATTRIBUTES_FK` FOREIGN KEY (`SESSION_PRIMARY_ID`) REFERENCES `SPRING_SESSION` (`PRIMARY_ID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-# Dump of table AuditLog
-# ------------------------------------------------------------
+-- Dump of table AuditLog
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `AuditLog`;
 
@@ -391,8 +401,8 @@ CREATE TABLE `AuditLog` (
   KEY `IX_Operator` (`Operator`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审计日志表';
 
-# Dump of table AuditLogDataInfluence
-# ------------------------------------------------------------
+-- Dump of table AuditLogDataInfluence
+-- ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `AuditLogDataInfluence`;
 
@@ -416,12 +426,12 @@ CREATE TABLE `AuditLogDataInfluence` (
   KEY `IX_EntityId` (`InfluenceEntityId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审计日志数据变动表';
 
-# Config
-# ------------------------------------------------------------
+-- Config
+-- ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Value`, `Comment`)
 VALUES
     ('apollo.portal.envs', 'dev', '可支持的环境列表'),
-    ('organizations', '[{\"orgId\":\"TEST1\",\"orgName\":\"样例部门1\"},{\"orgId\":\"TEST2\",\"orgName\":\"样例部门2\"}]', '部门列表'),
+    ('organizations', '[{"orgId":"TEST1","orgName":"样例部门1"},{"orgId":"TEST2","orgName":"样例部门2"}]', '部门列表'),
     ('superAdmin', 'apollo', 'Portal超级管理员'),
     ('api.readTimeout', '10000', 'http接口read timeout'),
     ('consumer.token.salt', 'someSalt', 'consumer token salt'),
@@ -435,6 +445,15 @@ VALUES
 	('apollo', '$2a$10$7r20uS.BQ9uBpf3Baj3uQOZvMVvB1RN3PYoKE94gtz2.WAOuiiwXS', 'apollo', 'apollo@acme.com', 1);
 
 INSERT INTO `Authorities` (`Username`, `Authority`) VALUES ('apollo', 'ROLE_user');
+
+-- 
+-- ===============================================================================
+-- ==                                                                           ==
+-- ==                     Generated from 'scripts/sql/src/'                     ==
+-- == by running 'mvn compile -pl apollo-build-sql-converter -Psql-converter'.  ==
+-- ==                              DO NOT EDIT !!!                              ==
+-- ==                                                                           ==
+-- ===============================================================================
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
