@@ -78,7 +78,6 @@ export SPRING_PROFILES_ACTIVE="github,database-discovery,auth"
 unset SPRING_SQL_CONFIG_INIT_MODE
 unset SPRING_SQL_PORTAL_INIT_MODE
 java -jar apollo-all-in-one.jar
-
 ```
 
 ## 2.2 Use H2 file database, automatic initialization
