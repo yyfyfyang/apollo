@@ -17,6 +17,7 @@ Apollo 2.4.0
 * [RefreshAdminServerAddressTask supports dynamic configuration of time interval](https://github.com/apolloconfig/apollo/pull/5248)
 * [Refactor: Configuration files uniformly use Kebab style](https://github.com/apolloconfig/apollo/pull/5262)
 * [Feature: openapi query namespace support not fill item](https://github.com/apolloconfig/apollo/pull/5249)
+* [Refactor: align database ClusterName and NamespaceName fields lengths](https://github.com/apolloconfig/apollo/pull/5263)
 
 ------------------
 All issues and pull requests are [here](https://github.com/apolloconfig/apollo/milestone/15?closed=1)
