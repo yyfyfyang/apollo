@@ -23,6 +23,7 @@ import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
+import com.ctrip.framework.apollo.common.utils.SecurityUtil;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,11 +53,15 @@ public class AppController {
   @PostMapping("/apps")
   public AppDTO create(@Valid @RequestBody AppDTO dto) {
     App entity = BeanUtils.transform(App.class, dto);
+    // 检查是否有同名APPID
     App managedEntity = appService.findOne(entity.getAppId());
     if (managedEntity != null) {
       throw BadRequestException.appAlreadyExists(entity.getAppId());
     }
-
+    // 创建App的时候生成一对RSA密钥
+    String[] rsaKeyStrings = SecurityUtil.genKeyPair();
+    entity.setPrivateKey(rsaKeyStrings[0]);
+    entity.setPublicKey(rsaKeyStrings[1]);
     entity = adminService.createNewApp(entity);
 
     return BeanUtils.transform(AppDTO.class, entity);

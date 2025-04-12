@@ -75,6 +75,7 @@
   "Component.ConfigItem.ItemValueNotHiddenChars": "No Special Characters",
   "Component.ConfigItem.FormatItemValue": "Format Content",
   "Component.ConfigItem.ItemComment": "Comment",
+  "Component.ConfigItem.ItemEncrypt": "Encrypt",
   "Component.ConfigItem.ChooseCluster": "Select Cluster",
   "Component.ConfigItem.ItemTypeName": "Type",
   "Component.ConfigItem.ItemTypeString": "String",

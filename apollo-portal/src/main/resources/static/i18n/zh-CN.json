@@ -75,6 +75,7 @@
   "Component.ConfigItem.ItemValueNotHiddenChars": "无特殊字符",
   "Component.ConfigItem.FormatItemValue": "格式化",
   "Component.ConfigItem.ItemComment": "Comment",
+  "Component.ConfigItem.ItemEncrypt": "加密",
   "Component.ConfigItem.ChooseCluster": "选择集群",
   "Component.ConfigItem.ItemTypeName": "类型",
   "Component.ConfigItem.ItemTypeString": "String",

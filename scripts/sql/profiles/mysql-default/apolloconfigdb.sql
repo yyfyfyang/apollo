@@ -33,9 +33,9 @@
 -- 
 -- Create Database
 -- ------------------------------------------------------------
-CREATE DATABASE IF NOT EXISTS ApolloConfigDB DEFAULT CHARACTER SET = utf8mb4;
+CREATE DATABASE IF NOT EXISTS YYFApolloConfigDB DEFAULT CHARACTER SET = utf8mb4;
 
-Use ApolloConfigDB;
+Use YYFApolloConfigDB;
 
 -- Dump of table app
 -- ------------------------------------------------------------
@@ -56,6 +56,8 @@ CREATE TABLE `App` (
   `DataChange_CreatedTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `DataChange_LastModifiedBy` varchar(64) DEFAULT '' COMMENT '最后修改人邮箱前缀',
   `DataChange_LastTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
+  `PrivateKey` VARCHAR(2048) NULL DEFAULT NULL COMMENT 'APP RSA私钥',
+  `PublicKey` VARCHAR(2048) NULL DEFAULT NULL COMMENT 'APP RSA公钥',
   PRIMARY KEY (`Id`),
   UNIQUE KEY `UK_AppId_DeletedAt` (`AppId`,`DeletedAt`),
   KEY `DataChange_LastTime` (`DataChange_LastTime`),

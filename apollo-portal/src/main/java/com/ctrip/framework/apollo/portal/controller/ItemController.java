@@ -19,7 +19,9 @@ package com.ctrip.framework.apollo.portal.controller;
 import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
+import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.common.utils.SecurityUtil;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
@@ -28,6 +30,7 @@ import com.ctrip.framework.apollo.portal.entity.model.NamespaceSyncModel;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceTextModel;
 import com.ctrip.framework.apollo.portal.entity.vo.ItemDiffs;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceIdentifier;
+import com.ctrip.framework.apollo.portal.service.AppService;
 import com.ctrip.framework.apollo.portal.service.ItemService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
@@ -60,17 +63,19 @@ import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkM
 @RestController
 public class ItemController {
 
+  private final AppService appService;
   private final ItemService configService;
   private final NamespaceService namespaceService;
   private final UserInfoHolder userInfoHolder;
   private final UserPermissionValidator userPermissionValidator;
 
-  public ItemController(final ItemService configService, final UserInfoHolder userInfoHolder,
+  public ItemController(final AppService appService,final ItemService configService, final UserInfoHolder userInfoHolder,
                         final UserPermissionValidator userPermissionValidator, final NamespaceService namespaceService) {
     this.configService = configService;
     this.userInfoHolder = userInfoHolder;
     this.userPermissionValidator = userPermissionValidator;
     this.namespaceService = namespaceService;
+    this.appService = appService;
   }
 
   @PreAuthorize(value = "@userPermissionValidator.hasModifyNamespacePermission(#appId, #env, #clusterName, #namespaceName)")
@@ -89,9 +94,10 @@ public class ItemController {
 
   @PreAuthorize(value = "@userPermissionValidator.hasModifyNamespacePermission(#appId, #env, #clusterName, #namespaceName)")
   @PostMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/item")
+  // 增加加密是否加密选项 encrypt
   public ItemDTO createItem(@PathVariable String appId, @PathVariable String env,
                             @PathVariable String clusterName, @PathVariable String namespaceName,
-                            @RequestBody ItemDTO item) {
+                            @RequestBody ItemDTO item, @PathVariable Boolean encrypt) {
     checkModel(isValidItem(item));
 
     //protect
@@ -102,19 +108,32 @@ public class ItemController {
     item.setDataChangeLastModifiedBy(userId);
     item.setDataChangeCreatedTime(null);
     item.setDataChangeLastModifiedTime(null);
+    if (encrypt) {
+      EncryptValue(appId, item);
+    }
 
     return configService.createItem(appId, Env.valueOf(env), clusterName, namespaceName, item);
+  }
+
+  private void EncryptValue(String appId, ItemDTO item) {
+    App app = appService.load(appId);
+    String encryptValue = SecurityUtil.encrypt(app.getPublicKey(), item.getValue());
+    String encryptValueWrappered = String.format("ENC(%s)", encryptValue);
+    item.setValue(encryptValueWrappered);
   }
 
   @PreAuthorize(value = "@userPermissionValidator.hasModifyNamespacePermission(#appId, #env, #clusterName, #namespaceName)")
   @PutMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/item")
   public void updateItem(@PathVariable String appId, @PathVariable String env,
                          @PathVariable String clusterName, @PathVariable String namespaceName,
-                         @RequestBody ItemDTO item) {
+                         @RequestBody ItemDTO item, @PathVariable Boolean encrypt) {
     checkModel(isValidItem(item));
 
     String username = userInfoHolder.getUser().getUserId();
     item.setDataChangeLastModifiedBy(username);
+    if (encrypt) {
+      EncryptValue(appId, item);
+    }
 
     configService.updateItem(appId, Env.valueOf(env), clusterName, namespaceName, item);
   }
