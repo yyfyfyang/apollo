@@ -71,6 +71,7 @@
 		<common-lang3.version>3.18.0</common-lang3.version>
 		<gson.version>2.10.1</gson.version>
 		<guava.version>32.0.0-jre</guava.version>
+		<jackson-databind-nullable.version>0.2.7</jackson-databind-nullable.version>
 		<javassist.version>3.23.1-GA</javassist.version>
 		<javax.activation.version>1.1.1</javax.activation.version>
 		<javax.mail.version>1.6.2</javax.mail.version>
@@ -79,6 +80,8 @@
 		<h2database.version>2.2.220</h2database.version>
 		<nacos-discovery-api.version>1.4.0</nacos-discovery-api.version>
 		<snakeyaml.version>2.3</snakeyaml.version>
+		<swagger-annotations.version>2.2.37</swagger-annotations.version>
+		<swagger-models.version>2.2.37</swagger-models.version>
 		<!-- database driver -->
 		<mysql-connector-j.version>8.2.0</mysql-connector-j.version>
 		<postgre.version>42.7.2</postgre.version>
@@ -201,6 +204,21 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>${common-lang3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openapitools</groupId>
+				<artifactId>jackson-databind-nullable</artifactId>
+				<version>${jackson-databind-nullable.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-annotations</artifactId>
+				<version>${swagger-annotations.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-models</artifactId>
+				<version>${swagger-models.version}</version>
 			</dependency>
 			<!-- to fix CVE-2022-45868 -->
 			<dependency>

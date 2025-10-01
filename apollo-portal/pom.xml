@@ -27,6 +27,7 @@
 	<artifactId>apollo-portal</artifactId>
 	<name>Apollo Portal</name>
 	<properties>
+		<apollo.openapi.spec.url>https://raw.githubusercontent.com/apolloconfig/apollo-openapi/refs/heads/main/apollo-openapi.yaml</apollo.openapi.spec.url>
 		<github.path>${project.artifactId}</github.path>
 		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
 	</properties>
@@ -43,6 +44,18 @@
 		<dependency>
 			<groupId>com.ctrip.framework.apollo</groupId>
 			<artifactId>apollo-openapi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-models</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.ctrip.framework.apollo</groupId>
@@ -121,6 +134,40 @@
 
 	</dependencies>
 	<build>
+		<!-- openapi-generator configuration -->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.openapitools</groupId>
+					<artifactId>openapi-generator-maven-plugin</artifactId>
+					<version>6.6.0</version>
+					<executions>
+						<execution>
+							<id>generate-openapi-sources</id>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>generate</goal>
+							</goals>
+							<configuration>
+								<inputSpec>${apollo.openapi.spec.url}</inputSpec>
+								<generatorName>spring</generatorName>
+								<output>${project.build.directory}/generated-sources/openapi</output>
+								<apiPackage>com.ctrip.framework.apollo.openapi.api</apiPackage>
+								<modelPackage>com.ctrip.framework.apollo.openapi.model</modelPackage>
+								<invokerPackage>com.ctrip.framework.apollo.openapi.invoker</invokerPackage>
+								<configOptions>
+									<interfaceOnly>true</interfaceOnly>
+									<useTags>true</useTags>
+									<dateLibrary>java8</dateLibrary>
+								</configOptions>
+								<skipValidateSpec>true</skipValidateSpec>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -197,6 +244,31 @@
 						</replacement>
 					</replacements>
 				</configuration>
+			</plugin>
+			<!-- Generate code from OpenAPI specification during the maven build -->
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+			</plugin>
+			<!-- Add OpenAPI generated sources to the Maven compile path -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.4.0</version>
+				<executions>
+					<execution>
+						<id>add-openapi-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
