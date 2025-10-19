@@ -16,27 +16,23 @@
  */
 package com.ctrip.framework.apollo.openapi.v1.controller;
 
-import com.ctrip.framework.apollo.openapi.api.ClusterOpenApiService;
+import com.ctrip.framework.apollo.audit.annotation.ApolloAuditLog;
+import com.ctrip.framework.apollo.audit.annotation.OpType;
+import com.ctrip.framework.apollo.openapi.server.service.ClusterOpenApiService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-import com.ctrip.framework.apollo.openapi.dto.OpenClusterDTO;
+import com.ctrip.framework.apollo.openapi.api.ClusterManagementApi;
+import com.ctrip.framework.apollo.openapi.model.OpenClusterDTO;
+import org.springframework.http.ResponseEntity;
 
 @RestController("openapiClusterController")
-@RequestMapping("/openapi/v1/envs/{env}")
-public class ClusterController {
+public class ClusterController implements ClusterManagementApi {
 
   private final UserService userService;
   private final ClusterOpenApiService clusterOpenApiService;
@@ -48,16 +44,14 @@ public class ClusterController {
     this.clusterOpenApiService = clusterOpenApiService;
   }
 
-  @GetMapping(value = "apps/{appId}/clusters/{clusterName:.+}")
-  public OpenClusterDTO getCluster(@PathVariable("appId") String appId, @PathVariable String env,
-      @PathVariable("clusterName") String clusterName) {
-    return this.clusterOpenApiService.getCluster(appId, env, clusterName);
+  @Override
+  public ResponseEntity<OpenClusterDTO> getCluster(String appId, String clusterName, String env) {
+    return ResponseEntity.ok(this.clusterOpenApiService.getCluster(appId, env, clusterName));
   }
 
   @PreAuthorize(value = "@consumerPermissionValidator.hasCreateClusterPermission(#appId)")
-  @PostMapping(value = "apps/{appId}/clusters")
-  public OpenClusterDTO createCluster(@PathVariable String appId, @PathVariable String env,
-      @Valid @RequestBody OpenClusterDTO cluster) {
+  @Override
+  public ResponseEntity<OpenClusterDTO> createCluster(String appId, String env, OpenClusterDTO cluster) {
 
     if (!Objects.equals(appId, cluster.getAppId())) {
       throw new BadRequestException(
@@ -78,7 +72,25 @@ public class ClusterController {
       throw BadRequestException.userNotExists(operator);
     }
 
-    return this.clusterOpenApiService.createCluster(env, cluster);
+    return ResponseEntity.ok(this.clusterOpenApiService.createCluster(env, cluster));
+  }
+
+  /**
+   * Delete Clusters
+   */
+  @PreAuthorize(value = "@consumerPermissionValidator.isAppAdmin(#appId)")
+  @ApolloAuditLog(type = OpType.DELETE, name = "Cluster.delete")
+  @Override
+  public ResponseEntity<Object> deleteCluster(String env, String appId, String clusterName, String operator) {
+    RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(operator),
+        "operator should not be null or empty");
+
+    if (userService.findByUserId(operator) == null) {
+      throw BadRequestException.userNotExists(operator);
+    }
+
+    clusterOpenApiService.deleteCluster(env, appId, clusterName);
+    return ResponseEntity.ok().build();
   }
 
 }
