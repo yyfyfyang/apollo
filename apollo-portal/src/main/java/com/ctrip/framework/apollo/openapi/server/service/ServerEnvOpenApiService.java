@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Apollo Authors
+ * Copyright 2025 Apollo Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,27 @@
  */
 package com.ctrip.framework.apollo.openapi.server.service;
 
-import com.ctrip.framework.apollo.openapi.model.OpenOrganizationDto;
-import com.ctrip.framework.apollo.openapi.util.OpenApiModelConverters;
-import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.PortalSettings;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ServerOrganizationOpenApiService implements OrganizationOpenApiService {
+public class ServerEnvOpenApiService implements EnvOpenApiService {
 
-  private final PortalConfig portalConfig;
+  private final PortalSettings portalSettings;
 
-  public ServerOrganizationOpenApiService(PortalConfig portalConfig) {
-    this.portalConfig = portalConfig;
+  public ServerEnvOpenApiService(PortalSettings portalSettings) {
+    this.portalSettings = portalSettings;
   }
 
   @Override
-  public List<OpenOrganizationDto> getOrganizations() {
-    return OpenApiModelConverters.fromOrganizations(portalConfig.organizations());
+  public List<String> getEnvs() {
+    List<String> environments = new ArrayList<>();
+    for (Env env : portalSettings.getActiveEnvs()) {
+      environments.add(env.toString());
+    }
+    return environments;
   }
 }

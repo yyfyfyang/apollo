@@ -19,6 +19,9 @@ package com.ctrip.framework.apollo.openapi.v1.controller;
 import com.ctrip.framework.apollo.audit.annotation.ApolloAuditLog;
 import com.ctrip.framework.apollo.audit.annotation.OpType;
 import com.ctrip.framework.apollo.openapi.server.service.ClusterOpenApiService;
+import com.ctrip.framework.apollo.portal.component.UserIdentityContextHolder;
+import com.ctrip.framework.apollo.portal.constant.UserIdentityConstants;
+import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import java.util.Objects;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,12 +39,15 @@ public class ClusterController implements ClusterManagementApi {
 
   private final UserService userService;
   private final ClusterOpenApiService clusterOpenApiService;
+  private final UserInfoHolder userInfoHolder;
 
   public ClusterController(
       UserService userService,
-      ClusterOpenApiService clusterOpenApiService) {
+      ClusterOpenApiService clusterOpenApiService,
+      UserInfoHolder userInfoHolder) {
     this.userService = userService;
     this.clusterOpenApiService = clusterOpenApiService;
+    this.userInfoHolder = userInfoHolder;
   }
 
   @Override
@@ -51,7 +57,8 @@ public class ClusterController implements ClusterManagementApi {
 
   @PreAuthorize(value = "@unifiedPermissionValidator.hasCreateClusterPermission(#appId)")
   @Override
-  public ResponseEntity<OpenClusterDTO> createCluster(String appId, String env, OpenClusterDTO cluster) {
+  public ResponseEntity<OpenClusterDTO> createCluster(String appId, String env,
+      OpenClusterDTO cluster) {
 
     if (!Objects.equals(appId, cluster.getAppId())) {
       throw new BadRequestException(
@@ -59,13 +66,21 @@ public class ClusterController implements ClusterManagementApi {
     }
 
     String clusterName = cluster.getName();
-    String operator = cluster.getDataChangeCreatedBy();
+    String operator = null;
+    if (UserIdentityConstants.USER.equals(UserIdentityContextHolder.getAuthType())) {
+      operator = userInfoHolder.getUser().getUserId();
+      cluster.setDataChangeLastModifiedBy(operator);
+      cluster.setDataChangeCreatedBy(operator);
+    } else {
+      operator = cluster.getDataChangeCreatedBy();
+    }
 
     RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(clusterName, operator),
         "name and dataChangeCreatedBy should not be null or empty");
 
     if (!InputValidator.isValidClusterNamespace(clusterName)) {
-      throw BadRequestException.invalidClusterNameFormat(InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE);
+      throw BadRequestException.invalidClusterNameFormat(
+          InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE);
     }
 
     if (userService.findByUserId(operator) == null) {
@@ -81,12 +96,15 @@ public class ClusterController implements ClusterManagementApi {
   @PreAuthorize(value = "@unifiedPermissionValidator.isAppAdmin(#appId)")
   @ApolloAuditLog(type = OpType.DELETE, name = "Cluster.delete")
   @Override
-  public ResponseEntity<Object> deleteCluster(String env, String appId, String clusterName, String operator) {
-    RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(operator),
-        "operator should not be null or empty");
+  public ResponseEntity<Object> deleteCluster(String env, String appId, String clusterName,
+      String operator) {
+    if (UserIdentityConstants.CONSUMER.equals(UserIdentityContextHolder.getAuthType())) {
+      RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(operator),
+          "operator should not be null or empty");
 
-    if (userService.findByUserId(operator) == null) {
-      throw BadRequestException.userNotExists(operator);
+      if (userService.findByUserId(operator) == null) {
+        throw BadRequestException.userNotExists(operator);
+      }
     }
 
     clusterOpenApiService.deleteCluster(env, appId, clusterName);

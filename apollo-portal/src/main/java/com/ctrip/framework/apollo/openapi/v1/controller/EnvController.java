@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Apollo Authors
+ * Copyright 2025 Apollo Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,23 @@
 package com.ctrip.framework.apollo.openapi.v1.controller;
 
 
-import com.ctrip.framework.apollo.openapi.api.OrganizationManagementApi;
-import com.ctrip.framework.apollo.openapi.server.service.OrganizationOpenApiService;
+import com.ctrip.framework.apollo.openapi.api.EnvironmentManagementApi;
+import com.ctrip.framework.apollo.openapi.server.service.EnvOpenApiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import com.ctrip.framework.apollo.openapi.model.OpenOrganizationDto;
 import java.util.List;
 
-@RestController("openapiOrganizationController")
-public class OrganizationController implements OrganizationManagementApi {
+@RestController("openapiEnvController")
+public class EnvController implements EnvironmentManagementApi {
 
-  private final OrganizationOpenApiService organizationOpenApiService;
+  private final EnvOpenApiService envOpenApiService;
 
-  public OrganizationController(OrganizationOpenApiService organizationOpenApiService) {
-    this.organizationOpenApiService = organizationOpenApiService;
+  public EnvController(EnvOpenApiService envOpenApiService) {
+    this.envOpenApiService = envOpenApiService;
   }
 
   @Override
-  public ResponseEntity<List<OpenOrganizationDto>> getOrganization() {
-    return ResponseEntity.ok(organizationOpenApiService.getOrganizations());
+  public ResponseEntity<List<String>> getEnvs() {
+    return ResponseEntity.ok(envOpenApiService.getEnvs());
   }
 }
