@@ -19,15 +19,18 @@ package com.ctrip.framework.apollo.portal.spi.configuration;
 import com.ctrip.framework.apollo.openapi.filter.ConsumerAuthenticationFilter;
 import com.ctrip.framework.apollo.openapi.util.ConsumerAuditUtil;
 import com.ctrip.framework.apollo.openapi.util.ConsumerAuthUtil;
+import com.ctrip.framework.apollo.portal.filter.PortalUserSessionFilter;
 import com.ctrip.framework.apollo.portal.filter.UserTypeResolverFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 @Configuration
 public class AuthFilterConfiguration {
 
-  private static final int OPEN_API_AUTH_ORDER = -99;
+  private static final int OPEN_API_AUTH_ORDER = -98;
+
   @Bean
   public FilterRegistrationBean<ConsumerAuthenticationFilter> openApiAuthenticationFilter(
       ConsumerAuthUtil consumerAuthUtil,
@@ -51,4 +54,23 @@ public class AuthFilterConfiguration {
     return authTypeResolverFilter;
   }
 
+  /**
+   * Portal user session filter for OpenAPI requests. This filter runs BEFORE
+   * ConsumerAuthenticationFilter to: 1. Allow authenticated Portal users to access OpenAPI 2.
+   * Redirect expired Portal sessions to login page (consistent with Portal endpoints)
+   * <p>
+   * Order: OPEN_API_AUTH_ORDER - 1 (runs first)
+   */
+  @Bean
+  public FilterRegistrationBean<PortalUserSessionFilter> portalUserSessionFilter(
+      Environment environment) {
+    FilterRegistrationBean<PortalUserSessionFilter> filter = new FilterRegistrationBean<>();
+
+    filter.setFilter(new PortalUserSessionFilter(environment));
+    filter.addUrlPatterns("/openapi/*");
+    filter.setOrder(OPEN_API_AUTH_ORDER
+        - 1); // Run before ConsumerAuthenticationFilter after springSecurityFilterChain
+
+    return filter;
+  }
 }

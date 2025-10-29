@@ -57,7 +57,10 @@ public class ConsumerAuthenticationFilter implements Filter {
       .expireAfterAccess(1, TimeUnit.HOURS)
       .maximumSize(RATE_LIMITER_CACHE_MAX_SIZE).build();
 
-  public ConsumerAuthenticationFilter(ConsumerAuthUtil consumerAuthUtil, ConsumerAuditUtil consumerAuditUtil) {
+  private static final String PORTAL_USER_AUTHENTICATED = "PORTAL_USER_AUTHENTICATED";
+
+  public ConsumerAuthenticationFilter(ConsumerAuthUtil consumerAuthUtil,
+      ConsumerAuditUtil consumerAuditUtil) {
     this.consumerAuthUtil = consumerAuthUtil;
     this.consumerAuditUtil = consumerAuditUtil;
   }
@@ -73,6 +76,10 @@ public class ConsumerAuthenticationFilter implements Filter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) resp;
 
+    if (Boolean.TRUE.equals(request.getAttribute(PORTAL_USER_AUTHENTICATED))) {
+      chain.doFilter(req, resp);
+      return;
+    }
     String token = request.getHeader(HttpHeaders.AUTHORIZATION);
     ConsumerToken consumerToken = consumerAuthUtil.getConsumerToken(token);
 
@@ -84,9 +91,11 @@ public class ConsumerAuthenticationFilter implements Filter {
     Integer rateLimit = consumerToken.getRateLimit();
     if (null != rateLimit && rateLimit > 0) {
       try {
-        ImmutablePair<Long, RateLimiter> rateLimiterPair = getOrCreateRateLimiterPair(consumerToken.getToken(), rateLimit);
+        ImmutablePair<Long, RateLimiter> rateLimiterPair = getOrCreateRateLimiterPair(
+            consumerToken.getToken(), rateLimit);
         long warmupToMillis = rateLimiterPair.getLeft() + WARMUP_MILLIS;
-        if (System.currentTimeMillis() > warmupToMillis && !rateLimiterPair.getRight().tryAcquire()) {
+        if (System.currentTimeMillis() > warmupToMillis && !rateLimiterPair.getRight()
+            .tryAcquire()) {
           response.sendError(TOO_MANY_REQUESTS, "Too Many Requests, the flow is limited");
           return;
         }
@@ -109,7 +118,8 @@ public class ConsumerAuthenticationFilter implements Filter {
     //nothing
   }
 
-  private ImmutablePair<Long, RateLimiter> getOrCreateRateLimiterPair(String key, Integer limitCount) {
+  private ImmutablePair<Long, RateLimiter> getOrCreateRateLimiterPair(String key,
+      Integer limitCount) {
     try {
       return LIMITER.get(key, () ->
           ImmutablePair.of(System.currentTimeMillis(), RateLimiter.create(limitCount)));
